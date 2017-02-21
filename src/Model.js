@@ -1,6 +1,6 @@
-var Cursor = require('./Cursor')
-var tv4 = require('tv4')
-var Promise = require('bluebird')
+const Cursor = require('./Cursor')
+const tv4 = require('tv4')
+const Promise = require('bluebird')
 class Model {
   constructor (name, schema, dbPromise) {
     this.__collection = null
@@ -15,6 +15,7 @@ class Model {
   validate (doc) {
     return tv4.validate(doc, this.schema)
   }
+
   giveCursorBack (method, args) {
     return new Cursor(this.__collectionPromise, method, args)
   }
@@ -23,24 +24,28 @@ class Model {
     var args = arguments
     return this.giveCursorBack('find', args)
   }
+
   findOne () {
     var args = arguments
     return this.__collectionPromise.then(function (collection) {
       return collection.findOne.apply(collection, args)
     })
   }
+
   findAndModify () {
     var args = arguments
     return this.__collectionPromise.then(function (collection) {
       return collection.findOne.apply(collection, args)
     })
   }
+
   update () {
     var args = arguments
     return this.__collectionPromise.then(function (collection) {
       return collection.update.apply(collection, args)
     })
   }
+
   insert () {
     var isValid = this.validate(arguments[0])
     if (!isValid) {
@@ -52,6 +57,7 @@ class Model {
       return collection.insert.apply(collection, args)
     })
   }
+
   createIndex (keys, options) {
     if (!options) {
       options = {}

@@ -1,5 +1,5 @@
-var mongodb = require('mongodb')
-var Promise = require('bluebird')
+const mongodb = require('mongodb')
+const Promise = require('bluebird')
 const Model = require('./Model')
 class Db {
   constructor (uri) {
@@ -9,7 +9,7 @@ class Db {
     this.models = {}
     this.modelQueue = []
   }
-  
+
   connect (uri) {
     this.__connectionPromise = new Promise((resolve, reject) => {
       mongodb.connect(uri, (err, db) => {
