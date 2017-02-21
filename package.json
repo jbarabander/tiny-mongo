@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d lib"
-    
   },
   "repository": {
     "type": "git",
@@ -25,7 +24,8 @@
   },
   "homepage": "https://github.com/jbarabander/tiny-mongo#readme",
   "devDependencies": {
-    "babel-cli": "^6.23.0"
+    "babel-cli": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0"
   },
   "dependencies": {
     "mongodb": "^2.2.24"
