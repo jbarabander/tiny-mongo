@@ -29,6 +29,12 @@ class Model {
       return collection.findOne.apply(collection, args)
     })
   }
+  findAndModify () {
+    var args = arguments
+    return this.__collectionPromise.then(function (collection) {
+      return collection.findOne.apply(collection, args)
+    })
+  }
   update () {
     var args = arguments
     return this.__collectionPromise.then(function (collection) {
