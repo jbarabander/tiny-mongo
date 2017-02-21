@@ -1,0 +1,33 @@
+{
+  "name": "tiny-mongo",
+  "version": "0.0.1",
+  "description": "a teeny tiny mongo wrapper and ODM",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib"
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jbarabander/tiny-mongo.git"
+  },
+  "keywords": [
+    "mongo",
+    "odm",
+    "small",
+    "tiny"
+  ],
+  "author": "jbarabander",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jbarabander/tiny-mongo/issues"
+  },
+  "homepage": "https://github.com/jbarabander/tiny-mongo#readme",
+  "devDependencies": {
+    "babel-cli": "^6.23.0"
+  },
+  "dependencies": {
+    "mongodb": "^2.2.24"
+  }
+}
