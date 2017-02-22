@@ -19,13 +19,17 @@ class Db {
         resolve(db)
       })
     })
+    this.__connectionPromise
+    .then(() => {
+      this.__runModelQueue()
+    })
     return this.__connectionPromise
   }
 
   __runModelQueue () {
     while (this.modelQueue.length) {
       var currentAction = this.modelQueue.shift()
-      if (currentAction.name && curentAction.schema) {
+      if (currentAction.name && currentAction.schema) {
         this.model(currentAction.name, currentAction.schema)
       }
     }
