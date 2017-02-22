@@ -1,24 +1,55 @@
-var mongodb = require('mongodb')
-var Promise = require('bluebird')
+const mongodb = require('mongodb')
+const Promise = require('bluebird')
 const Model = require('./Model')
 class Db {
   constructor (uri) {
-    this.__connectionPromise = this.connect(uri)
+    if (uri) {
+      this.connect(uri)
+    }
     this.models = {}
+    this.modelQueue = []
   }
+
   connect (uri) {
-    return new Promise(function (resolve, reject) {
-      mongodb.connect(uri, function (err, db) {
+    this.__connectionPromise = new Promise((resolve, reject) => {
+      mongodb.connect(uri, (err, db) => {
         if (err) {
           return reject(err)
         }
         resolve(db)
       })
     })
+    this.__connectionPromise
+    .then(() => {
+      this.__runModelQueue()
+    })
+    return this.__connectionPromise
   }
+
+  __runModelQueue () {
+    while (this.modelQueue.length) {
+      var currentAction = this.modelQueue.shift()
+      if (currentAction.name && currentAction.schema) {
+        this.model(currentAction.name, currentAction.schema)
+      }
+    }
+  }
+
+  __flushModelQueue () {
+    this.modelQueue = []
+  }
+
+  __addToModelQueue (name, schema) {
+    this.modelQueue.push({name, schema})
+  }
+
   model (name, schema) {
     if (schema) {
-      this.models[name] = new Model(name, schema, this.__connectionPromise)
+      if (!this.__connectionPromise) {
+        this.__addToModelQueue(name, schema)
+      } else {
+        this.models[name] = new Model(name, schema, this.__connectionPromise)
+      }
     }
     return this.models[name]
   }
