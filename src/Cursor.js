@@ -1,3 +1,5 @@
+var Transform = require('stream').Transform
+
 class Cursor {
   constructor (collectionPromise, methodName, upperArgs) {
     this.__wrappedCursor = null
@@ -48,9 +50,15 @@ class Cursor {
     return this.__applyToCursor('skip', arguments, true)
   }
 
-  stream () {
-    // NOTE: I know this has issues we are just going to let it go for now
-    return this.__applyToCursor('stream', arguments, true)
+  stream (transform) {
+    var transformOptions = {
+      objectMode: true
+    }
+    if (typeof transform === 'function') {
+      transformOptions.transform = transform
+    }
+    var transformStream = Transform(transformObj)
+    return this.pipe(transformStream)
   }
 
   pipe (destStream) {
@@ -63,7 +71,7 @@ class Cursor {
     }
     return destStream
   }
-  
+
   on () {
     return this.__applyToCursor('on', arguments, true)
   }
