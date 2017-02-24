@@ -12,6 +12,12 @@ class Model {
     })
   }
 
+  _applyMethod (method, args) {
+    return this._collectionPromise.then(function (collection) {
+      return collection[method].apply(collection, args)
+    })
+  }
+
   validate (doc) {
     return tv4.validate(doc, this.schema)
   }
@@ -21,29 +27,19 @@ class Model {
   }
 
   find () {
-    var args = arguments
-    return this.giveCursorBack('find', args)
+    return this.giveCursorBack('find', arguments)
   }
 
   findOne () {
-    var args = arguments
-    return this._collectionPromise.then(function (collection) {
-      return collection.findOne.apply(collection, args)
-    })
+    return this._applyMethod('findOne', arguments)
   }
 
   findAndModify () {
-    var args = arguments
-    return this._collectionPromise.then(function (collection) {
-      return collection.findOne.apply(collection, args)
-    })
+    return this._applyMethod('findAndModify', arguments)
   }
 
   update () {
-    var args = arguments
-    return this._collectionPromise.then(function (collection) {
-      return collection.update.apply(collection, args)
-    })
+    return this._applyMethod('update', arguments)
   }
 
   insert () {
@@ -52,22 +48,17 @@ class Model {
       var error = Error('Invalid Document')
       return Promise.reject(error)
     }
-    var args = arguments
-    return this._collectionPromise.then(function (collection) {
-      return collection.insert.apply(collection, args)
-    })
+    return this._applyMethod('insert', arguments)
   }
 
   createIndex (keys, options) {
     if (!options) {
       options = {}
     }
-    if (!options.background) {
+    if (options.background === undefined) {
       options.background = true
     }
-    return this._collectionPromise.then(function (collection) {
-      return collection.createIndex(keys, options)
-    })
+    return this._applyMethod('createIndex', [keys, options])
   }
 }
 
