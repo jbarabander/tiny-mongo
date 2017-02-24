@@ -3,12 +3,12 @@ const tv4 = require('tv4')
 const Promise = require('bluebird')
 class Model {
   constructor (name, schema, dbPromise) {
-    this.__collection = null
+    this._collection = null
     this.name = name
     this.schema = schema
-    this.__collectionPromise = dbPromise.then(db => {
-      this.__collection = db.collection(this.name)
-      return this.__collection
+    this._collectionPromise = dbPromise.then(db => {
+      this._collection = db.collection(this.name)
+      return this._collection
     })
   }
 
@@ -17,7 +17,7 @@ class Model {
   }
 
   giveCursorBack (method, args) {
-    return new Cursor(this.__collectionPromise, method, args)
+    return new Cursor(this._collectionPromise, method, args)
   }
 
   find () {
@@ -27,21 +27,21 @@ class Model {
 
   findOne () {
     var args = arguments
-    return this.__collectionPromise.then(function (collection) {
+    return this._collectionPromise.then(function (collection) {
       return collection.findOne.apply(collection, args)
     })
   }
 
   findAndModify () {
     var args = arguments
-    return this.__collectionPromise.then(function (collection) {
+    return this._collectionPromise.then(function (collection) {
       return collection.findOne.apply(collection, args)
     })
   }
 
   update () {
     var args = arguments
-    return this.__collectionPromise.then(function (collection) {
+    return this._collectionPromise.then(function (collection) {
       return collection.update.apply(collection, args)
     })
   }
@@ -53,7 +53,7 @@ class Model {
       return Promise.reject(error)
     }
     var args = arguments
-    return this.__collectionPromise.then(function (collection) {
+    return this._collectionPromise.then(function (collection) {
       return collection.insert.apply(collection, args)
     })
   }
@@ -65,7 +65,7 @@ class Model {
     if (!options.background) {
       options.background = true
     }
-    return this.__collectionPromise.then(function (collection) {
+    return this._collectionPromise.then(function (collection) {
       return collection.createIndex(keys, options)
     })
   }

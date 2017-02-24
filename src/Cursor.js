@@ -2,22 +2,22 @@ var Transform = require('stream').Transform
 
 class Cursor {
   constructor (collectionPromise, methodName, upperArgs) {
-    this.__wrappedCursor = null
-    // this.__prefetchStack = []
-    this.__cursorPromise = collectionPromise.then(collection => {
-      this.__wrappedCursor = collection[methodName].apply(collection, upperArgs)
-      return this.__wrappedCursor
+    this._wrappedCursor = null
+    // this._prefetchStack = []
+    this._cursorPromise = collectionPromise.then(collection => {
+      this._wrappedCursor = collection[methodName].apply(collection, upperArgs)
+      return this._wrappedCursor
     })
   }
 
-  __applyToCursor (methodName, args, returnCursor) {
+  _applyToCursor (methodName, args, returnCursor) {
     var valueToReturn
-    if (this.__wrappedCursor === null) {
-      valueToReturn = this.__cursorPromise.then(cursor => {
+    if (this._wrappedCursor === null) {
+      valueToReturn = this._cursorPromise.then(cursor => {
         return cursor[methodName].apply(cursor, args)
       })
     } else {
-      valueToReturn = this.__wrappedCursor[methodName].apply(this.__wrappedCursor, args)
+      valueToReturn = this._wrappedCursor[methodName].apply(this._wrappedCursor, args)
     }
     if (returnCursor) {
       return this
@@ -27,27 +27,27 @@ class Cursor {
   }
 
   sort () {
-    return this.__applyToCursor('sort', arguments, true)
+    return this._applyToCursor('sort', arguments, true)
   }
 
   rewind () {
-    return this.__applyToCursor('rewind', arguments, true)
+    return this._applyToCursor('rewind', arguments, true)
   }
 
   toArray () {
-    return this.__applyToCursor('toArray', arguments)
+    return this._applyToCursor('toArray', arguments)
   }
 
   each () {
-    return this.__applyToCursor('each', arguments)
+    return this._applyToCursor('each', arguments)
   }
 
   limit () {
-    return this.__applyToCursor('limit', arguments, true)
+    return this._applyToCursor('limit', arguments, true)
   }
 
   skip () {
-    return this.__applyToCursor('skip', arguments, true)
+    return this._applyToCursor('skip', arguments, true)
   }
 
   stream (transform) {
@@ -62,18 +62,18 @@ class Cursor {
   }
 
   pipe (destStream) {
-    if (this.__wrappedCursor === null) {
-      this.__cursorPromise.then(function (cursor) {
+    if (this._wrappedCursor === null) {
+      this._cursorPromise.then(function (cursor) {
         cursor.pipe(destStream)
       })
     } else {
-      this.__wrappedCursor.pipe(destStream)
+      this._wrappedCursor.pipe(destStream)
     }
     return destStream
   }
 
   on () {
-    return this.__applyToCursor('on', arguments, true)
+    return this._applyToCursor('on', arguments, true)
   }
 }
 
