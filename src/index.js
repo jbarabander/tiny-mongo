@@ -11,7 +11,7 @@ class Db {
   }
 
   connect (uri) {
-    this.__connectionPromise = new Promise((resolve, reject) => {
+    this._connectionPromise = new Promise((resolve, reject) => {
       mongodb.connect(uri, (err, db) => {
         if (err) {
           return reject(err)
@@ -19,14 +19,14 @@ class Db {
         resolve(db)
       })
     })
-    this.__connectionPromise
+    this._connectionPromise
     .then(() => {
-      this.__runModelQueue()
+      this._runModelQueue()
     })
-    return this.__connectionPromise
+    return this._connectionPromise
   }
 
-  __runModelQueue () {
+  _runModelQueue () {
     while (this.modelQueue.length) {
       var currentAction = this.modelQueue.shift()
       if (currentAction.name && currentAction.schema) {
@@ -35,20 +35,20 @@ class Db {
     }
   }
 
-  __flushModelQueue () {
+  _flushModelQueue () {
     this.modelQueue = []
   }
 
-  __addToModelQueue (name, schema) {
+  _addToModelQueue (name, schema) {
     this.modelQueue.push({name, schema})
   }
 
   model (name, schema) {
     if (schema) {
-      if (!this.__connectionPromise) {
-        this.__addToModelQueue(name, schema)
+      if (!this._connectionPromise) {
+        this._addToModelQueue(name, schema)
       } else {
-        this.models[name] = new Model(name, schema, this.__connectionPromise)
+        this.models[name] = new Model(name, schema, this._connectionPromise)
       }
     }
     return this.models[name]

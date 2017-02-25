@@ -3,12 +3,18 @@ const tv4 = require('tv4')
 const Promise = require('bluebird')
 class Model {
   constructor (name, schema, dbPromise) {
-    this.__collection = null
+    this._collection = null
     this.name = name
     this.schema = schema
-    this.__collectionPromise = dbPromise.then(db => {
-      this.__collection = db.collection(this.name)
-      return this.__collection
+    this._collectionPromise = dbPromise.then(db => {
+      this._collection = db.collection(this.name)
+      return this._collection
+    })
+  }
+
+  _applyMethod (method, args) {
+    return this._collectionPromise.then(function (collection) {
+      return collection[method].apply(collection, args)
     })
   }
 
@@ -17,33 +23,23 @@ class Model {
   }
 
   giveCursorBack (method, args) {
-    return new Cursor(this.__collectionPromise, method, args)
+    return new Cursor(this._collectionPromise, method, args)
   }
 
   find () {
-    var args = arguments
-    return this.giveCursorBack('find', args)
+    return this.giveCursorBack('find', arguments)
   }
 
   findOne () {
-    var args = arguments
-    return this.__collectionPromise.then(function (collection) {
-      return collection.findOne.apply(collection, args)
-    })
+    return this._applyMethod('findOne', arguments)
   }
 
   findAndModify () {
-    var args = arguments
-    return this.__collectionPromise.then(function (collection) {
-      return collection.findOne.apply(collection, args)
-    })
+    return this._applyMethod('findAndModify', arguments)
   }
 
   update () {
-    var args = arguments
-    return this.__collectionPromise.then(function (collection) {
-      return collection.update.apply(collection, args)
-    })
+    return this._applyMethod('update', arguments)
   }
 
   insert () {
@@ -52,22 +48,17 @@ class Model {
       var error = Error('Invalid Document')
       return Promise.reject(error)
     }
-    var args = arguments
-    return this.__collectionPromise.then(function (collection) {
-      return collection.insert.apply(collection, args)
-    })
+    return this._applyMethod('insert', arguments)
   }
 
   createIndex (keys, options) {
     if (!options) {
       options = {}
     }
-    if (!options.background) {
+    if (options.background === undefined) {
       options.background = true
     }
-    return this.__collectionPromise.then(function (collection) {
-      return collection.createIndex(keys, options)
-    })
+    return this._applyMethod('createIndex', [keys, options])
   }
 }
 
