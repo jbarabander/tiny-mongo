@@ -1,6 +1,6 @@
 {
   "name": "tiny-mongo",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "a teeny tiny mongo wrapper and ODM",
   "main": "lib/index.js",
   "scripts": {
