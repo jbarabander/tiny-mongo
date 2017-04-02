@@ -57,7 +57,7 @@ class Cursor {
     if (typeof transform === 'function') {
       transformOptions.transform = transform
     }
-    var transformStream = Transform(transformObj)
+    var transformStream = Transform(transformOptions)
     return this.pipe(transformStream)
   }
 
