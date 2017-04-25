@@ -1,6 +1,20 @@
 const Cursor = require('./Cursor')
 const tv4 = require('tv4')
+const objectId = require('mongodb').ObjectID
 const Promise = require('bluebird')
+
+tv4.addFormat('isValidMongoId', (data) => {
+  if (objectId.isValid(data.toString())) {
+    return null
+  }
+  return 'This is not a valid mongo id'
+})
+
+tv4.addSchema('objectId', {
+  type: ['string', 'object'],
+  format: 'isValidMongoId'
+})
+
 class Model {
   constructor (name, schema, dbPromise) {
     this._collection = null
